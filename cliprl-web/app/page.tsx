@@ -13,6 +13,7 @@ export default function Home() {
 						alt="ClipRL Logo"
 						width={40}
 						height={40}
+						className="dark:invert"
 					/>
 					<Link className="ml-2 text-3xl font-semibold" href="/">
 						ClipRL
