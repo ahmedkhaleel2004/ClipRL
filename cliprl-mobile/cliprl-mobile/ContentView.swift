@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVFoundation
+import UIKit
 
 struct ContentView: View {
     var body: some View {
@@ -16,8 +17,10 @@ struct ContentView: View {
 
 class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var captureSession: AVCaptureSession?
-    private var frameBuffer: [CMSampleBuffer] = []
+    private var frameBuffer: [Data] = []
     private let bufferLimit = 900  // 30fps * 30seconds
+    private var previousTimestamp: CMTime = CMTime.zero
+    private var frameCount: Int = 0
 
     override init() {
         super.init()
@@ -73,20 +76,26 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-
-                // log when a new frame is captured **REMOVE AFTER**
-                print("Captured a new frame at \(Date())")
-
-                if self.frameBuffer.count >= self.bufferLimit {
-                    self.frameBuffer.removeFirst()
-                    // log when an old frame is removed from the buffer **REMOVE AFTER**
-                    print("Removed an old frame from the buffer")
-                }
-
-                self.frameBuffer.append(sampleBuffer)
-                // log the current buffer size **REMOVE AFTER**
+                
                 print("Current buffer size: \(self.frameBuffer.count)")
+                
+                if let image = self.convertSampleBufferToUIImage(sampleBuffer: sampleBuffer),
+                   let compressedData = image.jpegData(compressionQuality: 0.5) {
+                    self.frameBuffer.append(compressedData)
+
+                    if self.frameBuffer.count > self.bufferLimit {
+                        self.frameBuffer.removeFirst()
+                    }
+                }
             }
+        }
+    
+    private func convertSampleBufferToUIImage(sampleBuffer: CMSampleBuffer) -> UIImage? {
+            guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return nil }
+            let ciImage = CIImage(cvImageBuffer: imageBuffer)
+            let context = CIContext(options: nil)
+            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
+            return UIImage(cgImage: cgImage)
         }
 }
 
