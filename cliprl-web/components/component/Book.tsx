@@ -12,9 +12,6 @@ import {
 
 import { useSwipeable } from "react-swipeable";
 
-import { Button } from "../ui/button";
-import { Car } from "lucide-react";
-
 interface BookProps {
 	pages: string[];
 	// this could change to a more complex type
