@@ -5,10 +5,10 @@ import React, { useState, useEffect } from "react";
 export function CarouselForImage() {
 	const [currentBackground, setCurrentBackground] = useState(0);
 	const backgroundImages = [
-		"happy1.jpg",
-		"happy2.jpg",
-		"happy3.jpg",
-		"happy4.jpg",
+		"happy1.jpeg",
+		"happy2.jpeg",
+		"happy3.jpeg",
+		"happy4.jpeg",
 	];
 
 	useEffect(() => {

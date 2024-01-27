@@ -1,13 +1,13 @@
-import React from "react";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import CarouselForImage from "@/components/component/ImageSilder";
 
-export default function aiPrompt() {
-	return <div></div>;
-}
+import React from "react";
+
+const aiprompt = () => {
+	return (
+		<div>
+			<CarouselForImage />
+		</div>
+	);
+};
+
+export default aiprompt;
