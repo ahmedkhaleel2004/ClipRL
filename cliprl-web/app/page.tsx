@@ -4,7 +4,7 @@ export default function Home() {
 	return (
 		<main>
 			<ModeToggle />
-			yurrr
+			<p className="text-2xl">Hello World</p>
 		</main>
 	);
 }
