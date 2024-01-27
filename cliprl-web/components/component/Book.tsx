@@ -37,11 +37,8 @@ const Book: React.FC<BookProps> = ({ pages }) => {
 				<CardTitle>Book</CardTitle>
 				<CardDescription>Book description</CardDescription>
 			</CardHeader>
-			<div
-				{...handlers}
-				className="flex justify-center items-center h-screen"
-			>
-				<div className="relative w-64 h-96">
+			<div {...handlers} className="">
+				<div className="">
 					{pages.map((page, index) => (
 						<div
 							key={index}
