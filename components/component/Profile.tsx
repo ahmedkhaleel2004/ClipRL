@@ -11,8 +11,9 @@ export default function ProfileClient() {
 	return (
 		user && (
 			<div>
-				<h2>Name: {user.name}</h2>awpofjaweoifjoi
+				<h2>Name: {user.name}</h2>
 				<p>Email: {user.email}</p>
+				sub?: {user.sub}
 			</div>
 		)
 	);

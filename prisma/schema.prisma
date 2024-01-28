@@ -8,11 +8,19 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model users {
-  id        Int      @id @default(autoincrement())
-  firstName String
-  lastName  String
-  validated Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  uid    String  @id @default(uuid())
+  videos Video[]
+}
+
+model Video {
+  id            String   @id @default(uuid())
+  description   String
+  transcription String
+  createdAt     DateTime @default(now())
+  url           String
+  userId        String
+  user          User     @relation(fields: [userId], references: [uid])
+
+  @@index([userId])
 }
