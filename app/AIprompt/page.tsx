@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ModeToggle } from "@/components/component/ModeToggle";
@@ -10,9 +10,7 @@ import { storage } from "@/lib/firebase";
 import { ref, getDownloadURL } from "firebase/storage";
 
 function aiprompt() {
-	const [videoURL, setVideoURL] = React.useState<string | undefined>(
-		undefined
-	);
+	const [videoURL, setVideoURL] = useState<string | undefined>(undefined);
 
 	useEffect(() => {
 		const storageRef = ref(storage, "videos/output.mp4");
