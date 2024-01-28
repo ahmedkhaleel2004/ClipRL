@@ -28,5 +28,6 @@ async function main(){
     // Upload data to the blob
     const uploadBlobResponse = await blockBlobClient.upload(fileContent, fileContent.length);
     console.log(`Upload block blob ${blobName} successfully`, uploadBlobResponse.requestId);
-
 }
+
+main().then(() => console.log('Done')).catch((ex) => console.log(ex.message));
