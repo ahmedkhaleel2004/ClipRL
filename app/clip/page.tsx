@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import React, { useEffect, useRef, useState } from "react";
 
 const Clip = () => {
 	const videoRef = useRef<HTMLVideoElement>(null);
@@ -30,50 +30,54 @@ const Clip = () => {
 		setMediaRecorder(recorder);
 
 		recorder.ondataavailable = (event: BlobEvent) => {
-			chunksRef.current.push(event.data);
-			if (chunksRef.current.length > 30) {
+			console.log(chunksRef.current.length);
+			if (chunksRef.current.length >= 30) {
 				chunksRef.current.shift();
 			}
+			chunksRef.current.push(event.data);
 		};
 
-		recorder.start(1000); // Record in 1-second chunks
+		recorder.start(1000); // one second chunks
 	};
 
 	const clipVideo = () => {
-		const blob = new Blob(chunksRef.current, { type: "video/webm" });
-		uploadAndConvertFile(blob);
-	};
+		if (mediaRecorder && mediaRecorder.state === "recording") {
+			mediaRecorder.stop();
 
-	const uploadAndConvertFile = async (fileBlob: Blob) => {
-		const formData = new FormData();
-		formData.append("file", fileBlob, "video.webm");
+			console.log("stopped updating buffer");
 
-		try {
-			const response = await fetch("/api/clip", {
-				method: "POST",
-				body: formData,
-			});
-
-			if (!response.ok) {
-				throw new Error("Network response was not ok");
-			}
-
-			const convertedBlob = await response.blob();
-			downloadFile(convertedBlob, "converted-video.mp4");
-		} catch (error) {
-			console.error("Error during file conversion:", error);
+			const blob = new Blob(chunksRef.current, { type: "video/webm" });
+			downloadClip(blob);
 		}
 	};
 
-	const downloadFile = (blob: Blob | MediaSource, filename: string) => {
+	const downloadClip = (blob: Blob) => {
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement("a");
 		a.href = url;
-		a.download = filename;
+		a.download = "clip.webm";
 		document.body.appendChild(a);
 		a.click();
 		window.URL.revokeObjectURL(url);
 		document.body.removeChild(a);
+
+		console.log(mediaRecorder?.state);
+
+		if (mediaRecorder) {
+			if (mediaRecorder.state === "inactive") {
+				setTimeout(() => {
+					console.log("resumed updating buffer");
+					mediaRecorder.start();
+				}, 15000);
+			} else {
+				const stream = videoRef.current?.srcObject as MediaStream;
+				if (stream) {
+					handleStream(stream);
+				} else {
+					console.error("videoRef.current is null");
+				}
+			}
+		}
 	};
 
 	return (
