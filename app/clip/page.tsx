@@ -7,7 +7,6 @@ import {
 	ContainerClient,
 	BlockBlobClient,
 } from "@azure/storage-blob";
-import { read } from "fs";
 
 const AZURE_STORAGE_CONNECTION_STRING =
 	process.env.AZURE_STORAGE_CONNECTION_STRING;
@@ -102,8 +101,8 @@ const Clip = () => {
 				localFilePath
 			);
 		};
+		reader.readAsDataURL(file);
 
-		reader;
 		console.log(mediaRecorder?.state);
 
 		if (mediaRecorder) {
