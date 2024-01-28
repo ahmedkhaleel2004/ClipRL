@@ -23,9 +23,9 @@ export default function Home() {
 					<ModeToggle />
 				</nav>
 			</header>
-			<main className="flex flex-col items-center justify-center">
+			<main className="flex flex-col items-center justify-center mx-16">
 				<div className="space-y-8 mb-8 mt-[30vh]">
-					<h1 className="text-3xl font-bold sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem]">
+					<h1 className="text-center text-3xl font-bold sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem]">
 						Experience the past with the future.
 					</h1>
 					<p className="text-xl text-center">
