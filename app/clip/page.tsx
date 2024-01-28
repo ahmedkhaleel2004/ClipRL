@@ -144,6 +144,9 @@ const Clip = () => {
 				className="border"
 			></video>
 			<Button onClick={clipVideo}>Clip it!</Button>
+			<Button className="shadow-2xl">
+				<a href="/api/auth/logout">Logout</a>
+			</Button>
 		</div>
 	);
 };
