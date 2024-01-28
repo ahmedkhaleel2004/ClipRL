@@ -1,11 +1,24 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ModeToggle } from "@/components/component/ModeToggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { storage } from "@/lib/firebase";
+import { ref, getDownloadURL } from "firebase/storage";
 
 function aiprompt() {
+	const [videoURL, setVideoURL] = React.useState<string | undefined>(
+		undefined
+	);
+
+	useEffect(() => {
+		const storageRef = ref(storage, "videos/output.mp4");
+		getDownloadURL(storageRef).then((url) => setVideoURL(url));
+	});
+
 	return (
 		<div>
 			<header className="flex items-center justify-between mx-8 mt-8">
@@ -25,7 +38,10 @@ function aiprompt() {
 					<ModeToggle />
 				</nav>
 			</header>
-			<div className="flex justify-center items-center h-screen">
+			<div className="flex flex-col justify-center items-center h-screen">
+				<video src={videoURL} autoPlay muted className="border">
+					Test
+				</video>
 				<div className="flex flex-col justify-center items-center w-80">
 					<h1 className="text-3xl font-bold sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem]">
 						AI Prompt

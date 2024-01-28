@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import React, { useEffect, useRef, useState } from "react";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import { storage } from "@/lib/firebase";
+import { ref, uploadBytes } from "firebase/storage";
 
 const Clip = () => {
 	const videoRef = useRef<HTMLVideoElement>(null);
@@ -57,7 +59,18 @@ const Clip = () => {
 			);
 
 		const blob = new Blob([data.buffer], { type: "video/mp4" });
-		downloadFile(blob, "clip.mp4");
+		downloadFile(blob, "output.mp4");
+
+		// store in firebase storage
+		const storageRef = ref(storage, "videos/output.mp4");
+
+		uploadBytes(storageRef, blob)
+			.then((snapshot) => {
+				console.log("Uploaded a blob or file!");
+			})
+			.catch((error) => {
+				console.error("Error uploading file:", error);
+			});
 	};
 
 	const handleStream = (stream: MediaStream) => {
