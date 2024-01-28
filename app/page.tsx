@@ -1,9 +1,21 @@
+"use client";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { useEffect } from "react";
 import { ModeToggle } from "@/components/component/ModeToggle";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+	const { user, error, isLoading } = useUser();
+	const router = useRouter();
+	useEffect(() => {
+		if (!isLoading && user) {
+			// User is logged in, redirect to /main
+			router.push("/queryOutput");
+		}
+	}, [user, isLoading]);
 	return (
 		<div className="min-h-screen">
 			<header className="flex items-center justify-between mx-8 mt-8">
@@ -34,7 +46,7 @@ export default function Home() {
 					</p>
 				</div>
 				<Button className="shadow-2xl">
-					<a href="/api/auth/login">Login</a>
+					<a href="/api/auth/login?returnTo=/queryOutput">Login</a>
 				</Button>
 			</main>
 		</div>
