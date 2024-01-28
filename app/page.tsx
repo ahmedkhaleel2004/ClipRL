@@ -10,12 +10,15 @@ import { useRouter } from "next/navigation";
 export default function Home() {
 	const { user, error, isLoading } = useUser();
 	const router = useRouter();
+
 	useEffect(() => {
 		if (!isLoading && user) {
-			// User is logged in, redirect to /main
-			router.push("/queryOutput");
+			router.push("/querytest");
+		} else if (!isLoading && error) {
+			console.error(error);
 		}
 	}, [user, isLoading]);
+
 	return (
 		<div className="min-h-screen">
 			<header className="flex items-center justify-between mx-8 mt-8">
@@ -46,7 +49,7 @@ export default function Home() {
 					</p>
 				</div>
 				<Button className="shadow-2xl">
-					<a href="/api/auth/login?returnTo=/queryOutput">Login</a>
+					<a href="/api/auth/login">Login</a>
 				</Button>
 			</main>
 		</div>
