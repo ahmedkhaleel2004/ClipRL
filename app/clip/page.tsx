@@ -2,6 +2,31 @@
 
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useRef, useState } from "react";
+import {
+	BlobServiceClient,
+	ContainerClient,
+	BlockBlobClient,
+} from "@azure/storage-blob";
+import { read } from "fs";
+
+const AZURE_STORAGE_CONNECTION_STRING =
+	process.env.AZURE_STORAGE_CONNECTION_STRING;
+
+if (!AZURE_STORAGE_CONNECTION_STRING) {
+	throw new Error("Azure Storage connection string is not defined");
+}
+
+const blobServiceClient: BlobServiceClient =
+	BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
+
+const AZURE_STORAGE_CONTAINER_NAME = process.env.AZURE_STORAGE_CONTAINER_NAME;
+if (!AZURE_STORAGE_CONTAINER_NAME) {
+	throw new Error("Azure Storage container name is not defined");
+}
+
+const containerClient: ContainerClient = blobServiceClient.getContainerClient(
+	AZURE_STORAGE_CONTAINER_NAME
+);
 
 const Clip = () => {
 	const videoRef = useRef<HTMLVideoElement>(null);
@@ -41,7 +66,7 @@ const Clip = () => {
 	};
 
 	const clipVideo = () => {
-		if (mediaRecorder && mediaRecorder.state === "recording") {
+		if (mediaRecorder) {
 			mediaRecorder.stop();
 
 			console.log("stopped updating buffer");
@@ -56,11 +81,29 @@ const Clip = () => {
 		const a = document.createElement("a");
 		a.href = url;
 		a.download = "clip.webm";
-		document.body.appendChild(a);
-		a.click();
-		window.URL.revokeObjectURL(url);
-		document.body.removeChild(a);
+		// document.body.appendChild(a);
+		// a.click();
+		// window.URL.revokeObjectURL(url);
+		// document.body.removeChild(a);
 
+		// convert blob to file
+		const file = new File([blob], "clip.webm", { type: "video/webm" });
+
+		const reader = new FileReader();
+
+		reader.onloadend = async function () {
+			const blobName = "clip.webm";
+			const localFilePath = reader.result as string;
+
+			// Upload blob to Azure Storage
+			await uploadBlobFromLocalPath(
+				containerClient,
+				blobName,
+				localFilePath
+			);
+		};
+
+		reader;
 		console.log(mediaRecorder?.state);
 
 		if (mediaRecorder) {
@@ -80,6 +123,17 @@ const Clip = () => {
 		}
 	};
 
+	async function uploadBlobFromLocalPath(
+		containerClient: ContainerClient,
+		blobName: string,
+		localFilePath: string
+	): Promise<void> {
+		// Create blob client from container client
+		const blockBlobClient: BlockBlobClient =
+			containerClient.getBlockBlobClient(blobName);
+
+		await blockBlobClient.uploadFile(localFilePath);
+	}
 	return (
 		<div>
 			<video
