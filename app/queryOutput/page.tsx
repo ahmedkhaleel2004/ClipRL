@@ -1,4 +1,4 @@
-import ProfileClient from "@/components/component/profile";
+import ProfileClient from "@/components/component/Profile";
 import { queryData } from "@/lib/getQueryOutput";
 import { Button } from "@/components/ui/button";
 
