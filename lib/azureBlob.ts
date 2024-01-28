@@ -14,7 +14,7 @@ async function main(){
     const containerClient = blobServiceClient.getContainerClient(containerName);
     
     // Replace with your blob name (this could be the filename you want to upload)
-    const blobName = 'your-blob-name.txt';
+    const blobName = '.txt';
     
     // Create a block blob client
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
