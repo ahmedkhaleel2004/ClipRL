@@ -1,4 +1,5 @@
 "use client";
+
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useEffect } from "react";
 import { ModeToggle } from "@/components/component/ModeToggle";
@@ -11,13 +12,54 @@ export default function Home() {
 	const { user, error, isLoading } = useUser();
 	const router = useRouter();
 
-	useEffect(() => {
-		if (!isLoading && user) {
-			router.push("/querytest");
-		} else if (!isLoading && error) {
-			console.error(error);
+	const createUser = async () => {
+		if (user) {
+			const uid = user.sub;
+			const response = await fetch("/api/createUser", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ uid }),
+			});
+			console.log("createUser response is:", response);
 		}
-	}, [user, isLoading]);
+	};
+
+	const checkUser = async () => {
+		if (user) {
+			const uid = user.sub;
+			const response = await fetch("/api/checkUser", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ uid }),
+			});
+			const results = await response.json();
+			return !!results;
+		}
+	};
+
+	useEffect(() => {
+		const checkUserAndRedirect = async () => {
+			if (!isLoading) {
+				// has to be done loading
+				const inDB = await checkUser();
+				console.log("inDB is:", inDB);
+				if (user && inDB) {
+					router.push("/clip");
+					// logged in and they exist in the database
+				} else if (user && !inDB) {
+					await createUser();
+					router.push("/clip");
+					// handle case where user is not logged in or doesn't exist in the database
+				}
+			}
+		};
+
+		checkUserAndRedirect();
+	}, [isLoading, user, router]);
 
 	return (
 		<div className="min-h-screen">
