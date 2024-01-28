@@ -59,7 +59,7 @@ export default function Home() {
 		};
 
 		checkUserAndRedirect();
-	}, [isLoading, user, router]);
+	}, [isLoading, user, router, checkUser, createUser]);
 
 	return (
 		<div className="min-h-screen">
